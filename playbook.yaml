@@ -1,0 +1,43 @@
+- name: Config Timezone & Hostname
+  hosts: all
+  become: true
+  tasks:
+    - name: Set timezone  Europe/Madrid
+      timezone:
+        name: Europe/Madrid
+
+    - name: Set hostname
+      command: hostnamectl set-hostname myhostname
+
+    - name: Install required tools
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - vim
+        - telnet
+        - htop
+        - iotop
+        - atop
+        - mc
+        - traceroute
+        - unzip
+    - name: Create motd file
+      copy:
+        content: |
+          Welcome to {{ ansible_hostname }}!
+
+          IP address: {{ ansible_default_ipv4.address }}
+          Hostname: {{ ansible_hostname }}
+          OS: {{ ansible_distribution }} {{ ansible_distribution_version }}
+        dest: /etc/motd
+
+        mode: '0750'
+
+    - name: Create 'academy' folder in /opt
+      file:
+        path: /opt/academy
+        state: directory
+
+##    - name: Display motd
+##      command: "{{ ip_address_command }} && {{ hostname_command }} && {{ os_info_command }}"

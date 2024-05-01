@@ -1,0 +1,20 @@
+---
+- name: Manage All  Server
+  hosts: all
+  become: yes
+  tasks:
+
+    - name: Create academy folder
+      file:
+        path: "/opt/academy"
+        state: directory
+
+
+    - name: Copy files to academy
+      copy:
+        src: "{{ item }}"
+        dest: "/opt/academy/"
+      with_items:
+        - "foo"
+        - "bar"
+        - "baz"
